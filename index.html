@@ -612,6 +612,10 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p>Make sure to replace <code>my_api_key</code> and <code>my_api_secret</code> with your API Key and Secret.</p>
+</blockquote>
+
 <p><strong>Summary:</strong> API index</p>
 
 <p><strong>Description:</strong> The index endpoint lists the available API endpoints.</p>
@@ -1013,6 +1017,10 @@ endpoints that extract data.</p>
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p>Make sure to replace <code>my_api_key</code> and <code>my_api_secret</code> with your API Key and Secret.</p>
+</blockquote>
+
 <p><strong>Parameters</strong></p>
 
 <table><thead>
@@ -1165,6 +1173,10 @@ See the <a href='#metadata'>Metadata</a> section for more details.
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p>Make sure to replace <code>my_api_key</code> and <code>my_api_secret</code> with your API Key and Secret.</p>
+</blockquote>
+
 <p><strong>Parameters</strong></p>
 
 <table><thead>
@@ -1376,6 +1388,10 @@ Content-Type: application/json headers set.</p>
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p>Make sure to replace <code>my_api_key</code> and <code>my_api_secret</code> with your API Key and Secret.</p>
+</blockquote>
+
 <p><strong>Parameters</strong></p>
 
 <table><thead>
@@ -1595,6 +1611,10 @@ with the appropriate Content-Type: application/json headers set.</p>
     <span class="n">ioutil</span><span class="o">.</span><span class="n">WriteFile</span><span class="p">(</span><span class="s">"global_met.nc"</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="m">0777</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p>Make sure to replace <code>my_api_key</code> and <code>my_api_secret</code> with your API Key and Secret.</p>
+</blockquote>
+
 <p><strong>Parameters</strong></p>
 
 <table><thead>
@@ -1670,10 +1690,10 @@ with the appropriate Content-Type: application/json headers set.</p>
 
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/"</span>
 
-<span class="n">r</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">"my_api_key"</span><span class="p">,</span> <span class="s">"my_api_secret"</span><span class="p">),</span> <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">"my_api_key"</span><span class="p">,</span> <span class="s">"my_api_secret"</span><span class="p">),</span> <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'solent_forecast.nc'</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">):</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
 </code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
 <span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
@@ -1718,6 +1738,10 @@ with the appropriate Content-Type: application/json headers set.</p>
     <span class="n">ioutil</span><span class="o">.</span><span class="n">WriteFile</span><span class="p">(</span><span class="s">"solent_forecast.nc"</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="m">0777</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p>Make sure to replace <code>my_api_key</code> and <code>my_api_secret</code> with your API Key and Secret.</p>
+</blockquote>
+
 <p><strong>Parameters</strong></p>
 
 <table><thead>
