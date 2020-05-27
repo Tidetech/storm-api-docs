@@ -108,6 +108,8 @@ func main() {
 }
 ```
 
+> Make sure to replace `my_api_key` and `my_api_secret` with your API Key and Secret.
+
 
 **Parameters**
 

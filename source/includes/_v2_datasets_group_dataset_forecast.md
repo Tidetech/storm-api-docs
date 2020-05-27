@@ -39,10 +39,10 @@ from requests import request
 
 url = "https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/"
 
-r = request("GET", url, auth=("my_api_key", "my_api_secret"), stream=True)
+response = request("GET", url, auth=("my_api_key", "my_api_secret"), stream=True)
 
 with open('solent_forecast.nc', 'wb') as f:
-    for chunk in r.iter_content(chunk_size=1024*1024):
+    for chunk in response.iter_content(chunk_size=1024*1024):
         f.write(chunk)
 ```
 
@@ -94,6 +94,7 @@ func main() {
 }
 ```
 
+> Make sure to replace `my_api_key` and `my_api_secret` with your API Key and Secret.
 
 
 **Parameters**
