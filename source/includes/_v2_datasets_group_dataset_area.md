@@ -37,6 +37,7 @@ curl --location --request POST https://api.tidetech.org/v2/datasets/meteorology/
 ``` javascript
 const fs = require("fs")
 const axios = require("axios")
+
 const apikey = "my_api_key"
 const apisecret = "my_api_secret"
 const url = "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"
@@ -70,7 +71,7 @@ axios.post(url, payload, {
 }).then((response) => {
     response.data.pipe(fs.createWriteStream("global_met.nc"))
 }).catch((error) => {
-    console.log(error);
+    console.log(error)
 })
 ```
 
@@ -158,11 +159,11 @@ import (
 const (
     apikey = "my_api_key"
     apisecret = "my_api_secret"
+    url = "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"
 )
 
 func main() {
 
-    url := "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"
     method := "POST"
 
     payload := strings.NewReader(`
@@ -191,7 +192,7 @@ func main() {
     }
     req.SetBasicAuth(apikey, apisecret)
     req.Header.Add("Content-Type", "application/json")
-    res, err := client.Do(req)
+    res, _ := client.Do(req)
     defer res.Body.Close()
     data, _ := ioutil.ReadAll(res.Body)
 
