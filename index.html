@@ -359,53 +359,43 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 
 <p>Using an API Key and Secret solves these issues.</p>
 <h3 id='http-basic-authentication'>HTTP Basic authentication</h3><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/auth/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/auth/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">hostname</span><span class="p">:</span> <span class="dl">'</span><span class="s1">api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">port</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
-  <span class="na">path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/auth/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
-    <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span> <span class="s2">`Basic </span><span class="p">${</span><span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">apikey</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">apisecret</span><span class="p">}</span><span class="s2">`</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="dl">'</span><span class="s1">base64</span><span class="dl">'</span><span class="p">)}</span><span class="s2">`</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
   <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="nx">https</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+<span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'my_api_key'</span><span class="p">,</span> <span class="s">'my_api_secret'</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -418,11 +408,11 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 <span class="k">const</span> <span class="p">(</span>
   <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
   <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
   <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
@@ -432,9 +422,9 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">req</span><span class="o">.</span><span class="n">SetBasicAuth</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">)</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -461,38 +451,24 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="dl">'</span><span class="s1">method</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">GET</span><span class="dl">'</span><span class="p">,</span>
-  <span class="dl">'</span><span class="s1">hostname</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">https://api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/auth/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="dl">'</span><span class="s1">headers</span><span class="dl">'</span><span class="p">:</span> <span class="p">{</span>
-  <span class="p">},</span>
-  <span class="dl">'</span><span class="s1">maxRedirects</span><span class="dl">'</span><span class="p">:</span> <span class="mi">20</span>
-<span class="p">};</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/auth/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">https</span><span class="p">.</span><span class="nx">request</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+  <span class="p">})</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">;</span>
 
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -502,21 +478,21 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
   <span class="s">"io/ioutil"</span>
 <span class="p">)</span>
 
+<span class="k">const</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
+
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
-  <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{</span>
-  <span class="p">}</span>
+  <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
   <span class="n">req</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
 
   <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -532,53 +508,43 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 <h2 id='browser-authentication'>Browser authentication</h2>
 <p>To view all of your datasets through the browser you must first authenticate your browser session. You can do this by navigating to <a href='https://api.tidetech.org/v2/?login=true'>https://api.tidetech.org/v2/?login=true</a>, which will provide a login form.</p>
 <h1 id='v2'>/v2/</h1><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/auth/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/auth/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">hostname</span><span class="p">:</span> <span class="dl">'</span><span class="s1">api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">port</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
-  <span class="na">path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/auth/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
-    <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span> <span class="s2">`Basic </span><span class="p">${</span><span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">apikey</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">apisecret</span><span class="p">}</span><span class="s2">`</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="dl">'</span><span class="s1">base64</span><span class="dl">'</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
-  <span class="p">},</span>
-<span class="p">};</span>
-
-<span class="nx">https</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+<span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'my_api_key'</span><span class="p">,</span> <span class="s">'my_api_secret'</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -591,11 +557,11 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 <span class="k">const</span> <span class="p">(</span>
   <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
   <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
   <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
@@ -605,9 +571,9 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">req</span><span class="o">.</span><span class="n">SetBasicAuth</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">)</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -679,52 +645,42 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 <p><strong>Method</strong> <code>GET</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/auth/ <span class="se">\</span>
 <span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/auth/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">hostname</span><span class="p">:</span> <span class="dl">'</span><span class="s1">api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">port</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
-  <span class="na">path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/auth/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
-    <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span> <span class="s2">`Basic </span><span class="p">${</span><span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">apikey</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">apisecret</span><span class="p">}</span><span class="s2">`</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="dl">'</span><span class="s1">base64</span><span class="dl">'</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
-  <span class="p">},</span>
-<span class="p">};</span>
-
-<span class="nx">https</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+<span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'my_api_key'</span><span class="p">,</span> <span class="s">'my_api_secret'</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/auth/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -737,11 +693,11 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
 <span class="k">const</span> <span class="p">(</span>
   <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
   <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/auth/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
   <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
@@ -751,9 +707,9 @@ As the files served from our `forecast` endpoint are stored on Amazon S3, it is 
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">req</span><span class="o">.</span><span class="n">SetBasicAuth</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">)</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -800,53 +756,43 @@ to you and their URLS.</p>
 
 <p><strong>Method</strong> <code>GET</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/datasets/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">hostname</span><span class="p">:</span> <span class="dl">'</span><span class="s1">api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">port</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
-  <span class="na">path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/datasets/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
-    <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span> <span class="s2">`Basic </span><span class="p">${</span><span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">apikey</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">apisecret</span><span class="p">}</span><span class="s2">`</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="dl">'</span><span class="s1">base64</span><span class="dl">'</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
-  <span class="p">},</span>
-<span class="p">};</span>
-
-<span class="nx">https</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+<span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/"</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'my_api_key'</span><span class="p">,</span> <span class="s">'my_api_secret'</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/datasets/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -859,11 +805,11 @@ to you and their URLS.</p>
 <span class="k">const</span> <span class="p">(</span>
   <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
   <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/datasets/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
   <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
@@ -873,9 +819,9 @@ to you and their URLS.</p>
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">req</span><span class="o">.</span><span class="n">SetBasicAuth</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">)</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -937,53 +883,43 @@ endpoints that extract data.</p>
 
 <p><strong>Method</strong> <code>GET</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/datasets/currents/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/currents/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">hostname</span><span class="p">:</span> <span class="dl">'</span><span class="s1">api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">port</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
-  <span class="na">path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/datasets/currents/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
-    <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span> <span class="s2">`Basic </span><span class="p">${</span><span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">apikey</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">apisecret</span><span class="p">}</span><span class="s2">`</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="dl">'</span><span class="s1">base64</span><span class="dl">'</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
-  <span class="p">},</span>
-<span class="p">};</span>
-
-<span class="nx">https</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+<span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/"</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'my_api_key'</span><span class="p">,</span> <span class="s">'my_api_secret'</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/datasets/currents/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -996,11 +932,11 @@ endpoints that extract data.</p>
 <span class="k">const</span> <span class="p">(</span>
   <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
   <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
   <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
@@ -1010,9 +946,9 @@ endpoints that extract data.</p>
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">req</span><span class="o">.</span><span class="n">SetBasicAuth</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">)</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -1093,53 +1029,43 @@ available metadata for that dataset.</p>
 See the <a href='#metadata'>Metadata</a> section for more details.
 </aside>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">);</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
 
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/</span><span class="dl">"</span>
 
-<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">hostname</span><span class="p">:</span> <span class="dl">'</span><span class="s1">api.tidetech.org</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">port</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
-  <span class="na">path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/v2/datasets/currents/baltic_sea_currents/</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
-    <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span> <span class="s2">`Basic </span><span class="p">${</span><span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">apikey</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">apisecret</span><span class="p">}</span><span class="s2">`</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="dl">'</span><span class="s1">base64</span><span class="dl">'</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
-  <span class="p">},</span>
-<span class="p">};</span>
-
-<span class="nx">https</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">data</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-  <span class="p">});</span>
-
-  <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">});</span>
+<span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+<span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/"</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'my_api_key'</span><span class="p">,</span> <span class="s">'my_api_secret'</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">GET</span><span class="p">);</span>
 
-<span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="highlight go tab-go"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -1152,11 +1078,11 @@ See the <a href='#metadata'>Metadata</a> section for more details.
 <span class="k">const</span> <span class="p">(</span>
   <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
   <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/"</span>
   <span class="n">method</span> <span class="o">:=</span> <span class="s">"GET"</span>
 
   <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
@@ -1166,9 +1092,9 @@ See the <a href='#metadata'>Metadata</a> section for more details.
     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">req</span><span class="o">.</span><span class="n">SetBasicAuth</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">)</span>
-  <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+  <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
   <span class="k">defer</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
-  <span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+  <span class="n">body</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
   <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
 <span class="p">}</span>
@@ -1282,9 +1208,9 @@ Content-Type: application/json headers set.</p>
 <p><strong>Endpoint</strong> <code>/v2/datasets/{group}/{dataset}/points/</code></p>
 
 <p><strong>Method</strong> <code>POST</code></p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> POST https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/points/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> POST https://api.tidetech.org/v2/datasets/waves/global_waves/points/ <span class="se">\</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
 <span class="nt">--data-raw</span> <span class="s1">'{
     "points": [
         {
@@ -1315,12 +1241,42 @@ Content-Type: application/json headers set.</p>
         }
     ]
 }'</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span>
-<span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span><span class="dl">"</span><span class="s2">points</span><span class="dl">"</span><span class="p">:[{</span><span class="dl">"</span><span class="s2">id</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">point</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">point</span><span class="dl">"</span><span class="p">:{</span><span class="dl">"</span><span class="s2">coordinates</span><span class="dl">"</span><span class="p">:[</span><span class="o">-</span><span class="mf">1.44457</span><span class="p">,</span><span class="mf">50.0616</span><span class="p">],</span><span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">Point</span><span class="dl">"</span><span class="p">},</span><span class="dl">"</span><span class="s2">timestep</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">2020-05-29T18:00:00Z</span><span class="dl">"</span><span class="p">},{</span><span class="dl">"</span><span class="s2">id</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">multipoint</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">point</span><span class="dl">"</span><span class="p">:{</span><span class="dl">"</span><span class="s2">coordinates</span><span class="dl">"</span><span class="p">:[[</span><span class="o">-</span><span class="mf">8.695</span><span class="p">,</span><span class="mf">50.079</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.472</span><span class="p">,</span><span class="mf">50.1438</span><span class="p">]],</span><span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">MultiPoint</span><span class="dl">"</span><span class="p">},</span><span class="dl">"</span><span class="s2">timestep</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">2020-05-27T06:00:00Z</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">parameters</span><span class="dl">"</span><span class="p">:[</span><span class="dl">"</span><span class="s2">HTSGW</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">DIRPW</span><span class="dl">"</span><span class="p">]}]}</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/waves/global_waves/points/</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">points</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="dl">"</span><span class="s2">id</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">point</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">point</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">coordinates</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="o">-</span><span class="mf">1.44457</span><span class="p">,</span>
+                    <span class="mf">50.0616</span>
+                <span class="p">],</span>
+                <span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Point</span><span class="dl">"</span>
+            <span class="p">},</span>
+            <span class="dl">"</span><span class="s2">timestep</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">2020-05-29T18:00:00Z</span><span class="dl">"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="dl">"</span><span class="s2">id</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">multipoint</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">point</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">coordinates</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">[</span><span class="o">-</span><span class="mf">8.695</span><span class="p">,</span> <span class="mf">50.079</span><span class="p">],</span>
+                    <span class="p">[</span><span class="o">-</span><span class="mf">1.472</span><span class="p">,</span> <span class="mf">50.1438</span><span class="p">]</span>
+                <span class="p">],</span>
+                <span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">MultiPoint</span><span class="dl">"</span>
+            <span class="p">},</span>
+            <span class="dl">"</span><span class="s2">timestep</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">2020-05-27T06:00:00Z</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">parameters</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="dl">"</span><span class="s2">HTSGW</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">DIRPW</span><span class="dl">"</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
 
-<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/waves/global_waves/points/</span><span class="dl">"</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">payload</span><span class="p">,</span> <span class="p">{</span>
     <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
         <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
@@ -1332,23 +1288,83 @@ Content-Type: application/json headers set.</p>
 <span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/waves/global_waves/points/"</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"points"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">"id"</span><span class="p">:</span> <span class="s">"point"</span><span class="p">,</span>
+            <span class="s">"point"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="o">-</span><span class="mf">1.44457</span><span class="p">,</span>
+                    <span class="mf">50.0616</span>
+                <span class="p">],</span>
+                <span class="s">"type"</span><span class="p">:</span> <span class="s">"Point"</span>
+            <span class="p">},</span>
+            <span class="s">"timestep"</span><span class="p">:</span> <span class="s">"2020-05-29T18:00:00Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">"id"</span><span class="p">:</span> <span class="s">"multipoint"</span><span class="p">,</span>
+            <span class="s">"point"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">[</span><span class="o">-</span><span class="mf">8.695</span><span class="p">,</span> <span class="mf">50.079</span><span class="p">],</span>
+                    <span class="p">[</span><span class="o">-</span><span class="mf">1.472</span><span class="p">,</span> <span class="mf">50.1438</span><span class="p">]</span>
+                <span class="p">],</span>
+                <span class="s">"type"</span><span class="p">:</span> <span class="s">"MultiPoint"</span>
+            <span class="p">},</span>
+            <span class="s">"timestep"</span><span class="p">:</span> <span class="s">"2020-05-27T06:00:00Z"</span><span class="p">,</span>
+            <span class="s">"parameters"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s">"HTSGW"</span><span class="p">,</span>
+                <span class="s">"DIRPW"</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
 
-<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s">"points"</span><span class="p">:[{</span><span class="s">"id"</span><span class="p">:</span><span class="s">"point"</span><span class="p">,</span><span class="s">"point"</span><span class="p">:{</span><span class="s">"coordinates"</span><span class="p">:[</span><span class="o">-</span><span class="mf">1.44457</span><span class="p">,</span><span class="mf">50.0616</span><span class="p">],</span><span class="s">"type"</span><span class="p">:</span><span class="s">"Point"</span><span class="p">},</span><span class="s">"timestep"</span><span class="p">:</span><span class="s">"2020-05-29T18:00:00Z"</span><span class="p">},{</span><span class="s">"id"</span><span class="p">:</span><span class="s">"multipoint"</span><span class="p">,</span><span class="s">"point"</span><span class="p">:{</span><span class="s">"coordinates"</span><span class="p">:[[</span><span class="o">-</span><span class="mf">8.695</span><span class="p">,</span><span class="mf">50.079</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.472</span><span class="p">,</span><span class="mf">50.1438</span><span class="p">]],</span><span class="s">"type"</span><span class="p">:</span><span class="s">"MultiPoint"</span><span class="p">},</span><span class="s">"timestep"</span><span class="p">:</span><span class="s">"2020-05-27T06:00:00Z"</span><span class="p">,</span><span class="s">"parameters"</span><span class="p">:[</span><span class="s">"HTSGW"</span><span class="p">,</span><span class="s">"DIRPW"</span><span class="p">]}]}</span>
-
-<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">"my_api_key"</span><span class="p">,</span> <span class="s">"my_api_secret"</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">))</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/waves/global_waves/points/"</span><span class="p">;</span>
+<span class="kt">var</span> <span class="n">payload</span> <span class="p">=</span> <span class="s">"{"</span> <span class="p">+</span>
+    <span class="s">"\"points\": ["</span> <span class="p">+</span>
+        <span class="s">"{"</span> <span class="p">+</span>
+            <span class="s">"\"id\": \"point\","</span> <span class="p">+</span> 
+            <span class="s">"\"point\": {"</span> <span class="p">+</span>
+                <span class="s">"\"coordinates\": ["</span> <span class="p">+</span>
+                    <span class="s">"-1.44457, 50.0616"</span> <span class="p">+</span>
+                <span class="s">"],"</span> <span class="p">+</span>
+                <span class="s">"\"type\": \"Point\""</span> <span class="p">+</span>
+            <span class="s">"},"</span> <span class="p">+</span>
+            <span class="s">"\"timestep\": \"2020-05-29T18:00:00Z\""</span> <span class="p">+</span>
+        <span class="s">"},"</span> <span class="p">+</span>
+        <span class="s">"{"</span> <span class="p">+</span>
+            <span class="s">"\"id\": \"multipoint\","</span> <span class="p">+</span>
+            <span class="s">"\"point\": {"</span> <span class="p">+</span>
+                <span class="s">"\"coordinates\": ["</span> <span class="p">+</span>
+                    <span class="s">"[-8.695, 50.079],"</span> <span class="p">+</span>
+                    <span class="s">"[-1.472,50.1438]"</span> <span class="p">+</span>
+                <span class="s">"],"</span> <span class="p">+</span>
+                <span class="s">"\"type\": \"MultiPoint\""</span> <span class="p">+</span>
+            <span class="s">"},"</span> <span class="p">+</span>
+            <span class="s">"\"timestep\": \"2020-05-27T06:00:00Z\","</span> <span class="p">+</span>
+            <span class="s">"\"parameters\": ["</span> <span class="p">+</span>
+                <span class="s">"\"HTSGW\","</span> <span class="p">+</span>
+                <span class="s">"\"DIRPW\""</span> <span class="p">+</span>
+            <span class="s">"]"</span> <span class="p">+</span>
+        <span class="s">"}"</span> <span class="p">+</span>
+    <span class="s">"]"</span> <span class="p">+</span>
+<span class="s">"}"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/datasets/waves/global_waves/points/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">POST</span><span class="p">);</span>
 <span class="n">request</span><span class="p">.</span><span class="nf">AddHeader</span><span class="p">(</span><span class="s">"Content-Type"</span><span class="p">,</span> <span class="s">"application/json"</span><span class="p">);</span>
-<span class="n">request</span><span class="p">.</span><span class="nf">AddBody</span><span class="p">(</span><span class="k">new</span> <span class="p">{</span><span class="s">"points"</span><span class="p">:[{</span><span class="s">"id"</span><span class="p">:</span><span class="s">"point"</span><span class="p">,</span><span class="s">"point"</span><span class="p">:{</span><span class="s">"coordinates"</span><span class="p">:[-</span><span class="m">1.44457</span><span class="p">,</span><span class="m">50.0616</span><span class="p">],</span><span class="s">"type"</span><span class="p">:</span><span class="s">"Point"</span><span class="p">},</span><span class="s">"timestep"</span><span class="p">:</span><span class="s">"2020-05-29T18:00:00Z"</span><span class="p">},{</span><span class="s">"id"</span><span class="p">:</span><span class="s">"multipoint"</span><span class="p">,</span><span class="s">"point"</span><span class="p">:{</span><span class="s">"coordinates"</span><span class="p">:[[-</span><span class="m">8.695</span><span class="p">,</span><span class="m">50.079</span><span class="p">],[-</span><span class="m">1.472</span><span class="p">,</span><span class="m">50.1438</span><span class="p">]],</span><span class="s">"type"</span><span class="p">:</span><span class="s">"MultiPoint"</span><span class="p">},</span><span class="s">"timestep"</span><span class="p">:</span><span class="s">"2020-05-27T06:00:00Z"</span><span class="p">,</span><span class="s">"parameters"</span><span class="p">:[</span><span class="s">"HTSGW"</span><span class="p">,</span><span class="s">"DIRPW"</span><span class="p">]}]});</span>
+<span class="n">request</span><span class="p">.</span><span class="nf">AddJsonBody</span><span class="p">(</span><span class="n">payload</span><span class="p">);</span>
 
 <span class="n">IRestResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">);</span>
@@ -1364,14 +1380,45 @@ Content-Type: application/json headers set.</p>
 <span class="k">const</span> <span class="p">(</span>
     <span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
     <span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/waves/global_waves/points/"</span>
 <span class="p">)</span>
 
 <span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/datasets/waves/global_waves/points/"</span>
     <span class="n">method</span> <span class="o">:=</span> <span class="s">"POST"</span>
 
-    <span class="n">payload</span> <span class="o">:=</span> <span class="n">strings</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="s">"{</span><span class="se">\"</span><span class="s">points</span><span class="se">\"</span><span class="s">:[{</span><span class="se">\"</span><span class="s">id</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">point</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">point</span><span class="se">\"</span><span class="s">:{</span><span class="se">\"</span><span class="s">coordinates</span><span class="se">\"</span><span class="s">:[-1.44457,50.0616],</span><span class="se">\"</span><span class="s">type</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">Point</span><span class="se">\"</span><span class="s">},</span><span class="se">\"</span><span class="s">timestep</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">2020-05-29T18:00:00Z</span><span class="se">\"</span><span class="s">},{</span><span class="se">\"</span><span class="s">id</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">multipoint</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">point</span><span class="se">\"</span><span class="s">:{</span><span class="se">\"</span><span class="s">coordinates</span><span class="se">\"</span><span class="s">:[[-8.695,50.079],[-1.472,50.1438]],</span><span class="se">\"</span><span class="s">type</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">MultiPoint</span><span class="se">\"</span><span class="s">},</span><span class="se">\"</span><span class="s">timestep</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">2020-05-27T06:00:00Z</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">parameters</span><span class="se">\"</span><span class="s">:[</span><span class="se">\"</span><span class="s">HTSGW</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">DIRPW</span><span class="se">\"</span><span class="s">]}]}"</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">:=</span> <span class="n">strings</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="s">`
+    {
+        "points": [
+            {
+                "id": "point",
+                "point": {
+                    "coordinates": [
+                        -1.44457,
+                        50.0616
+                    ],
+                    "type": "Point"
+                },
+                "timestep": "2020-05-29T18:00:00Z"
+            },
+            {
+                "id": "multipoint",
+                "point": {
+                    "coordinates": [
+                        [-8.695, 50.079],
+                        [-1.472, 50.1438]
+                    ],
+                    "type": "MultiPoint"
+                },
+                "timestep": "2020-05-27T06:00:00Z",
+                "parameters": [
+                    "HTSGW",
+                    "DIRPW"
+                ]
+            }
+        ]
+    }
+    `</span><span class="p">)</span>
 
     <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
     <span class="n">req</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
@@ -1513,8 +1560,8 @@ with the appropriate Content-Type: application/json headers set.</p>
 
 <p><strong>Method</strong> <code>POST</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> POST https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
 <span class="nt">--data-raw</span> <span class="s1">'{
     "start_timestep": "2020-05-27T00:00:00Z",
     "end_timestep": "2020-05-27T12:00:00Z",
@@ -1531,14 +1578,34 @@ with the appropriate Content-Type: application/json headers set.</p>
     }
 }'</span> <span class="se">\</span>
 <span class="nt">--output</span> global_met.nc
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span>
-<span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span><span class="dl">"</span><span class="s2">start_timestep</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">2020-05-27T00:00:00Z</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">end_timestep</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">2020-05-27T12:00:00Z</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">parameters</span><span class="dl">"</span><span class="p">:[</span><span class="dl">"</span><span class="s2">UGRD</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">VGRD</span><span class="dl">"</span><span class="p">],</span><span class="dl">"</span><span class="s2">polygon</span><span class="dl">"</span><span class="p">:{</span><span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">Polygon</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">coordinates</span><span class="dl">"</span><span class="p">:[[[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.8536</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.708</span><span class="p">,</span><span class="mf">50.665</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.502</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.8165</span><span class="p">,</span><span class="mf">50.6691</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.8536</span><span class="p">]]]}}</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">fs</span><span class="dl">"</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">start_timestep</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">2020-05-27T00:00:00Z</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">end_timestep</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">2020-05-27T12:00:00Z</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">parameters</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="dl">"</span><span class="s2">UGRD</span><span class="dl">"</span><span class="p">,</span>
+        <span class="dl">"</span><span class="s2">VGRD</span><span class="dl">"</span>
+    <span class="p">],</span>
+    <span class="dl">"</span><span class="s2">polygon</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Polygon</span><span class="dl">"</span><span class="p">,</span>
+        <span class="dl">"</span><span class="s2">coordinates</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span> <span class="mf">50.8536</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.708</span><span class="p">,</span> <span class="mf">50.665</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span> <span class="mf">50.502</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">0.8165</span><span class="p">,</span> <span class="mf">50.6691</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span> <span class="mf">50.8536</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/</span><span class="dl">"</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
-    <span class="na">responseType</span><span class="p">:</span> <span class="dl">'</span><span class="s1">stream</span><span class="dl">'</span><span class="p">,</span>
+<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">payload</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">responseType</span><span class="p">:</span> <span class="dl">"</span><span class="s2">stream</span><span class="dl">"</span><span class="p">,</span>
     <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
         <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
@@ -1550,28 +1617,66 @@ with the appropriate Content-Type: application/json headers set.</p>
 <span class="p">})</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">request</span>
 
+<span class="n">apikey</span> <span class="o">=</span> <span class="s">"my_api_key"</span>
+<span class="n">apisecret</span> <span class="o">=</span> <span class="s">"my_api_secret"</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"start_timestep"</span><span class="p">:</span> <span class="s">"2020-05-27T00:00:00Z"</span><span class="p">,</span>
+    <span class="s">"end_timestep"</span><span class="p">:</span> <span class="s">"2020-05-27T12:00:00Z"</span><span class="p">,</span>
+    <span class="s">"parameters"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"UGRD"</span><span class="p">,</span>
+        <span class="s">"VGRD"</span>
+    <span class="p">],</span>
+    <span class="s">"polygon"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"type"</span><span class="p">:</span> <span class="s">"Polygon"</span><span class="p">,</span>
+        <span class="s">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.8536</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.708</span><span class="p">,</span><span class="mf">50.665</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.502</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">0.8165</span><span class="p">,</span><span class="mf">50.6691</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.8536</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s">"start_timestep"</span><span class="p">:</span><span class="s">"2020-05-27T00:00:00Z"</span><span class="p">,</span><span class="s">"end_timestep"</span><span class="p">:</span><span class="s">"2020-05-27T12:00:00Z"</span><span class="p">,</span><span class="s">"parameters"</span><span class="p">:[</span><span class="s">"UGRD"</span><span class="p">,</span><span class="s">"VGRD"</span><span class="p">],</span><span class="s">"polygon"</span><span class="p">:{</span><span class="s">"type"</span><span class="p">:</span><span class="s">"Polygon"</span><span class="p">,</span><span class="s">"coordinates"</span><span class="p">:[[[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.8536</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.708</span><span class="p">,</span><span class="mf">50.665</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.502</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.8165</span><span class="p">,</span><span class="mf">50.6691</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.2732</span><span class="p">,</span><span class="mf">50.8536</span><span class="p">]]]}}</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">),</span> <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">r</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">"my_api_key"</span><span class="p">,</span> <span class="s">"my_api_secret"</span><span class="p">),</span> <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'global_met.nc'</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">):</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">"global_met.nc"</span><span class="p">,</span> <span class="s">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">):</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">string</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">apisecret</span> <span class="p">=</span> <span class="s">"my_api_secret"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">url</span> <span class="p">=</span> <span class="s">"https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">payload</span> <span class="p">=</span> <span class="s">"{"</span> <span class="p">+</span>
+    <span class="s">"\"start_timestep\": \"2020-05-27T00:00:00Z\","</span> <span class="p">+</span>
+    <span class="s">"\"end_timestep\": \"2020-05-27T12:00:00Z\","</span> <span class="p">+</span>
+    <span class="s">"\"parameters\": ["</span> <span class="p">+</span>
+        <span class="s">"\"UGRD\","</span> <span class="p">+</span>
+        <span class="s">"\"VGRD\""</span> <span class="p">+</span>
+    <span class="s">"],"</span> <span class="p">+</span>
+    <span class="s">"\"polygon\": {"</span> <span class="p">+</span>
+        <span class="s">"\"type\": \"Polygon\","</span> <span class="p">+</span>
+        <span class="s">"\"coordinates\": ["</span> <span class="p">+</span>
+            <span class="s">"["</span> <span class="p">+</span>
+                <span class="s">"[-1.2732, 50.8536],"</span> <span class="p">+</span>
+                <span class="s">"[-1.708, 50.665],"</span> <span class="p">+</span>
+                <span class="s">"[-1.2732, 50.502],"</span> <span class="p">+</span>
+                <span class="s">"[-0.8165, 50.6691],"</span> <span class="p">+</span>
+                <span class="s">"[-1.2732, 50.8536]"</span> <span class="p">+</span>
+            <span class="s">"]"</span> <span class="p">+</span>
+        <span class="s">"]"</span> <span class="p">+</span>
+    <span class="s">"}"</span> <span class="p">+</span>
+<span class="s">"}"</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="s">"https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestClient</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Authenticator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">HttpBasicAuthenticator</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="n">apisecret</span><span class="p">);</span>
 <span class="n">client</span><span class="p">.</span><span class="n">Timeout</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
 
 <span class="kt">var</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RestRequest</span><span class="p">(</span><span class="n">Method</span><span class="p">.</span><span class="n">POST</span><span class="p">);</span>
 <span class="n">request</span><span class="p">.</span><span class="nf">AddHeader</span><span class="p">(</span><span class="s">"Content-Type"</span><span class="p">,</span> <span class="s">"application/json"</span><span class="p">);</span>
-<span class="n">request</span><span class="p">.</span><span class="nf">AddParameter</span><span class="p">(</span>
-    <span class="s">"application/json"</span><span class="p">,</span>
-    <span class="s">"{\"start_timestep\":\"2020-05-27T00:00:00Z\",\"end_timestep\":\"2020-05-27T12:00:00Z\",\"parameters\":[\"UGRD\",\"VGRD\"],\"polygon\":{\"type\":\"Polygon\",\"coordinates\":[[[-1.2732,50.8536],[-1.708,50.665],[-1.2732,50.502],[-0.8165,50.6691],[-1.2732,50.8536]]]}}"</span><span class="p">,</span>
-    <span class="n">ParameterType</span><span class="p">.</span><span class="n">RequestBody</span><span class="p">);</span>
+<span class="n">request</span><span class="p">.</span><span class="nf">AddJsonBody</span><span class="p">(</span><span class="n">payload</span><span class="p">);</span>
 
 <span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">DownloadData</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 <span class="n">File</span><span class="p">.</span><span class="nf">WriteAllBytes</span><span class="p">(</span><span class="s">"global_met.nc"</span><span class="p">,</span> <span class="n">response</span><span class="p">);</span>
@@ -1594,7 +1699,23 @@ with the appropriate Content-Type: application/json headers set.</p>
     <span class="n">url</span> <span class="o">:=</span> <span class="s">"https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"</span>
     <span class="n">method</span> <span class="o">:=</span> <span class="s">"POST"</span>
 
-    <span class="n">payload</span> <span class="o">:=</span> <span class="n">strings</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="s">"{</span><span class="se">\"</span><span class="s">start_timestep</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">2020-05-27T00:00:00Z</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">end_timestep</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">2020-05-27T12:00:00Z</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">parameters</span><span class="se">\"</span><span class="s">:[</span><span class="se">\"</span><span class="s">UGRD</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">VGRD</span><span class="se">\"</span><span class="s">],</span><span class="se">\"</span><span class="s">polygon</span><span class="se">\"</span><span class="s">:{</span><span class="se">\"</span><span class="s">type</span><span class="se">\"</span><span class="s">:</span><span class="se">\"</span><span class="s">Polygon</span><span class="se">\"</span><span class="s">,</span><span class="se">\"</span><span class="s">coordinates</span><span class="se">\"</span><span class="s">:[[[-1.2732,50.8536],[-1.708,50.665],[-1.2732,50.502],[-0.8165,50.6691],[-1.2732,50.8536]]]}}"</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">:=</span> <span class="n">strings</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="s">`
+    {
+        "start_timestep": "2020-05-27T00:00:00Z",
+        "end_timestep": "2020-05-27T12:00:00Z",
+        "parameters": ["UGRD", "VGRD"],
+        "polygon": {
+            "type": "Polygon",
+            "coordinates": [[
+                [-1.2732, 50.8536],
+                [-1.7080, 50.6650],
+                [-1.2732, 50.5020],
+                [-0.8165, 50.6691],
+                [-1.2732, 50.8536]
+            ]]
+        }
+    }
+    `</span><span class="p">)</span>
 
     <span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span> <span class="p">{}</span>
     <span class="n">req</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
@@ -1668,15 +1789,15 @@ with the appropriate Content-Type: application/json headers set.</p>
 
 <p><strong>Method</strong> <code>GET</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/ <span class="se">\</span>
-<span class="nt">--user</span> <span class="s1">'my_api_key:my_api_secret'</span> <span class="se">\</span>
+<span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span> <span class="se">\</span>
 <span class="nt">--output</span> solent_forecast.nc
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_key</span><span class="dl">'</span>
-<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">my_api_secret</span><span class="dl">'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">fs</span><span class="dl">"</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">axios</span><span class="dl">"</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">apikey</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_key</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">apisecret</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">my_api_secret</span><span class="dl">"</span>
 
 <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/</span><span class="dl">"</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
-    <span class="na">responseType</span><span class="p">:</span> <span class="dl">'</span><span class="s1">stream</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">responseType</span><span class="p">:</span> <span class="dl">"</span><span class="s2">stream</span><span class="dl">"</span><span class="p">,</span>
     <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">username</span><span class="p">:</span> <span class="nx">apikey</span><span class="p">,</span>
         <span class="na">password</span><span class="p">:</span> <span class="nx">apisecret</span><span class="p">,</span>
@@ -1692,7 +1813,7 @@ with the appropriate Content-Type: application/json headers set.</p>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">"my_api_key"</span><span class="p">,</span> <span class="s">"my_api_secret"</span><span class="p">),</span> <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'solent_forecast.nc'</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">"solent_forecast.nc"</span><span class="p">,</span> <span class="s">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">):</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
 </code></pre></div><div class="highlight"><pre class="highlight csharp tab-csharp"><code><span class="kt">var</span> <span class="n">apikey</span> <span class="p">=</span> <span class="s">"my_api_key"</span><span class="p">;</span>
