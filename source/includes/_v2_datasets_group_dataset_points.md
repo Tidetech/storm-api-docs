@@ -14,9 +14,9 @@ Content-Type: application/json headers set.
 
 
 ``` shell
-curl --location --request POST https://api.tidetech.org/v2/datasets/currents/baltic_sea_currents/points/ \
---user 'my_api_key:my_api_secret' \
---header 'Content-Type: application/json' \
+curl --location --request POST https://api.tidetech.org/v2/datasets/waves/global_waves/points/ \
+--user "my_api_key:my_api_secret" \
+--header "Content-Type: application/json" \
 --data-raw '{
     "points": [
         {
@@ -50,12 +50,42 @@ curl --location --request POST https://api.tidetech.org/v2/datasets/currents/bal
 ```
 
 ``` javascript
-const axios = require('axios')
-const apikey = 'my_api_key'
-const apisecret = 'my_api_secret'
-const data = {"points":[{"id":"point","point":{"coordinates":[-1.44457,50.0616],"type":"Point"},"timestep":"2020-05-29T18:00:00Z"},{"id":"multipoint","point":{"coordinates":[[-8.695,50.079],[-1.472,50.1438]],"type":"MultiPoint"},"timestep":"2020-05-27T06:00:00Z","parameters":["HTSGW","DIRPW"]}]}
+const axios = require("axios")
+const apikey = "my_api_key"
+const apisecret = "my_api_secret"
+const url = "https://api.tidetech.org/v2/datasets/waves/global_waves/points/"
+const payload = {
+    "points": [
+        {
+            "id": "point",
+            "point": {
+                "coordinates": [
+                    -1.44457,
+                    50.0616
+                ],
+                "type": "Point"
+            },
+            "timestep": "2020-05-29T18:00:00Z"
+        },
+        {
+            "id": "multipoint",
+            "point": {
+                "coordinates": [
+                    [-8.695, 50.079],
+                    [-1.472, 50.1438]
+                ],
+                "type": "MultiPoint"
+            },
+            "timestep": "2020-05-27T06:00:00Z",
+            "parameters": [
+                "HTSGW",
+                "DIRPW"
+            ]
+        }
+    ]
+}
 
-axios.post("https://api.tidetech.org/v2/datasets/waves/global_waves/points/", data, {
+axios.post(url, payload, {
     auth: {
         username: apikey,
         password: apisecret,
@@ -70,26 +100,86 @@ axios.post("https://api.tidetech.org/v2/datasets/waves/global_waves/points/", da
 ``` python
 from requests import request
 
+apikey = "my_api_key"
+apisecret = "my_api_secret"
 url = "https://api.tidetech.org/v2/datasets/waves/global_waves/points/"
+payload = {
+    "points": [
+        {
+            "id": "point",
+            "point": {
+                "coordinates": [
+                    -1.44457,
+                    50.0616
+                ],
+                "type": "Point"
+            },
+            "timestep": "2020-05-29T18:00:00Z"
+        },
+        {
+            "id": "multipoint",
+            "point": {
+                "coordinates": [
+                    [-8.695, 50.079],
+                    [-1.472, 50.1438]
+                ],
+                "type": "MultiPoint"
+            },
+            "timestep": "2020-05-27T06:00:00Z",
+            "parameters": [
+                "HTSGW",
+                "DIRPW"
+            ]
+        }
+    ]
+}
 
-payload = {"points":[{"id":"point","point":{"coordinates":[-1.44457,50.0616],"type":"Point"},"timestep":"2020-05-29T18:00:00Z"},{"id":"multipoint","point":{"coordinates":[[-8.695,50.079],[-1.472,50.1438]],"type":"MultiPoint"},"timestep":"2020-05-27T06:00:00Z","parameters":["HTSGW","DIRPW"]}]}
-
-response = request("POST", url, json=payload, auth=("my_api_key", "my_api_secret"))
+response = request("POST", url, json=payload, auth=(apikey, apisecret))
 
 print(response.json())
 ```
 
 ``` csharp
-var apikey = "my_api_key";
-var apisecret = "my_api_secret";
+string apikey = "my_api_key";
+string apisecret = "my_api_secret";
+string url = "https://api.tidetech.org/v2/datasets/waves/global_waves/points/";
+var payload = "{" +
+    "\"points\": [" +
+        "{" +
+            "\"id\": \"point\"," + 
+            "\"point\": {" +
+                "\"coordinates\": [" +
+                    "-1.44457, 50.0616" +
+                "]," +
+                "\"type\": \"Point\"" +
+            "}," +
+            "\"timestep\": \"2020-05-29T18:00:00Z\"" +
+        "}," +
+        "{" +
+            "\"id\": \"multipoint\"," +
+            "\"point\": {" +
+                "\"coordinates\": [" +
+                    "[-8.695, 50.079]," +
+                    "[-1.472,50.1438]" +
+                "]," +
+                "\"type\": \"MultiPoint\"" +
+            "}," +
+            "\"timestep\": \"2020-05-27T06:00:00Z\"," +
+            "\"parameters\": [" +
+                "\"HTSGW\"," +
+                "\"DIRPW\"" +
+            "]" +
+        "}" +
+    "]" +
+"}";
 
-var client = new RestClient("https://api.tidetech.org/v2/datasets/waves/global_waves/points/");
+var client = new RestClient(url);
 client.Authenticator = new HttpBasicAuthenticator(apikey, apisecret);
 client.Timeout = -1;
 
 var request = new RestRequest(Method.POST);
 request.AddHeader("Content-Type", "application/json");
-request.AddBody(new {"points":[{"id":"point","point":{"coordinates":[-1.44457,50.0616],"type":"Point"},"timestep":"2020-05-29T18:00:00Z"},{"id":"multipoint","point":{"coordinates":[[-8.695,50.079],[-1.472,50.1438]],"type":"MultiPoint"},"timestep":"2020-05-27T06:00:00Z","parameters":["HTSGW","DIRPW"]}]});
+request.AddJsonBody(payload);
 
 IRestResponse response = client.Execute(request);
 Console.WriteLine(response.Content);
@@ -108,14 +198,45 @@ import (
 const (
     apikey = "my_api_key"
     apisecret = "my_api_secret"
+    url = "https://api.tidetech.org/v2/datasets/waves/global_waves/points/"
 )
 
 func main() {
 
-    url := "https://api.tidetech.org/v2/datasets/waves/global_waves/points/"
     method := "POST"
 
-    payload := strings.NewReader("{\"points\":[{\"id\":\"point\",\"point\":{\"coordinates\":[-1.44457,50.0616],\"type\":\"Point\"},\"timestep\":\"2020-05-29T18:00:00Z\"},{\"id\":\"multipoint\",\"point\":{\"coordinates\":[[-8.695,50.079],[-1.472,50.1438]],\"type\":\"MultiPoint\"},\"timestep\":\"2020-05-27T06:00:00Z\",\"parameters\":[\"HTSGW\",\"DIRPW\"]}]}")
+    payload := strings.NewReader(`
+    {
+        "points": [
+            {
+                "id": "point",
+                "point": {
+                    "coordinates": [
+                        -1.44457,
+                        50.0616
+                    ],
+                    "type": "Point"
+                },
+                "timestep": "2020-05-29T18:00:00Z"
+            },
+            {
+                "id": "multipoint",
+                "point": {
+                    "coordinates": [
+                        [-8.695, 50.079],
+                        [-1.472, 50.1438]
+                    ],
+                    "type": "MultiPoint"
+                },
+                "timestep": "2020-05-27T06:00:00Z",
+                "parameters": [
+                    "HTSGW",
+                    "DIRPW"
+                ]
+            }
+        ]
+    }
+    `)
 
     client := &http.Client {}
     req, err := http.NewRequest(method, url, payload)

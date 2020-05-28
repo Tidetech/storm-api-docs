@@ -12,62 +12,52 @@ to you and their URLS.
 
 ```shell
 curl --location --request GET https://api.tidetech.org/v2/datasets/ \
---user 'my_api_key:my_api_secret'
+--user "my_api_key:my_api_secret"
 ```
 
 ```javascript
-const https = require('https');
+const axios = require("axios")
 
-const apikey = 'my_api_key';
-const apisecret = 'my_api_secret';
+const apikey = "my_api_key";
+const apisecret = "my_api_secret"
+const url = "https://api.tidetech.org/v2/datasets/"
 
-const options = {
-  hostname: 'api.tidetech.org',
-  port: 443,
-  path: '/v2/datasets/',
-  headers: {
-    'Authorization': `Basic ${Buffer.from(`${apikey}:${apisecret}`).toString('base64')}`,
-  },
-};
-
-https.get(options, (res) => {
-  let data = '';
-
-  res.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  res.on("end", () => {
-    console.log(data);
-  });
-
-  res.on("error", (error) => {
-    console.error(error);
-  });
-});
+axios.get(url, {
+  auth: {
+    username: apikey,
+    password: apisecret,
+  }
+}).then((response) => {
+  console.log(response.data)
+}).catch((error) => {
+  console.log(error)
+})
 ```
 
 ```python
 from requests import request
 
+apikey = "my_api_key"
+apisecret = "my_api_secret"
 url = "https://api.tidetech.org/v2/datasets/"
 
-response = request("GET", url, auth=('my_api_key', 'my_api_secret'))
+response = request("GET", url, auth=(apikey, apisecret))
 
 print(response.json())
 ```
 
 ```csharp
-var apikey = "my_api_key";
-var apisecret = "my_api_secret";
+string apikey = "my_api_key";
+string apisecret = "my_api_secret";
+string url = "https://api.tidetech.org/v2/datasets/";
 
-var client = new RestClient("https://api.tidetech.org/v2/datasets/");
+var client = new RestClient(url);
 client.Authenticator = new HttpBasicAuthenticator(apikey, apisecret);
 client.Timeout = -1;
 
 var request = new RestRequest(Method.GET);
 
-IRestResponse response = client.Execute(request);
+var response = client.Execute(request);
 Console.WriteLine(response.Content);
 ```
 
@@ -83,11 +73,11 @@ import (
 const (
   apikey = "my_api_key"
   apisecret = "my_api_secret"
+  url = "https://api.tidetech.org/v2/datasets/"
 )
 
 func main() {
 
-  url := "https://api.tidetech.org/v2/datasets/"
   method := "GET"
 
   client := &http.Client {}
@@ -97,9 +87,9 @@ func main() {
     fmt.Println(err)
   }
   req.SetBasicAuth(apikey, apisecret)
-  res, err := client.Do(req)
+  res, _ := client.Do(req)
   defer res.Body.Close()
-  body, err := ioutil.ReadAll(res.Body)
+  body, _ := ioutil.ReadAll(res.Body)
 
   fmt.Println(string(body))
 }

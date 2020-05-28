@@ -11,18 +11,18 @@
 
 ``` shell
 curl --location --request GET https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/ \
---user 'my_api_key:my_api_secret' \
+--user "my_api_key:my_api_secret" \
 --output solent_forecast.nc
 ```
 
 ``` javascript
-const fs = require('fs')
-const axios = require('axios')
-const apikey = 'my_api_key'
-const apisecret = 'my_api_secret'
+const fs = require("fs")
+const axios = require("axios")
+const apikey = "my_api_key"
+const apisecret = "my_api_secret"
 
 axios.get("https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/", data, {
-    responseType: 'stream',
+    responseType: "stream",
     auth: {
         username: apikey,
         password: apisecret,
@@ -41,7 +41,7 @@ url = "https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/"
 
 response = request("GET", url, auth=("my_api_key", "my_api_secret"), stream=True)
 
-with open('solent_forecast.nc', 'wb') as f:
+with open("solent_forecast.nc", "wb") as f:
     for chunk in response.iter_content(chunk_size=1024*1024):
         f.write(chunk)
 ```

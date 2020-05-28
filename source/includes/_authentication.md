@@ -22,62 +22,52 @@ Using an API Key and Secret solves these issues.
 
 ```shell
 curl --location --request GET https://api.tidetech.org/v2/auth/ \
---user 'my_api_key:my_api_secret'
+--user "my_api_key:my_api_secret"
 ```
 
 ```javascript
-const https = require('https');
+const axios = require("axios")
 
-const apikey = 'my_api_key';
-const apisecret = 'my_api_secret';
+const apikey = "my_api_key";
+const apisecret = "my_api_secret"
+const url = "https://api.tidetech.org/v2/auth/"
 
-const options = {
-  hostname: 'api.tidetech.org',
-  port: 443,
-  path: '/v2/auth/',
-  headers: {
-    'Authorization': `Basic ${Buffer.from(`${apikey}:${apisecret}`).toString('base64')}`
+axios.get(url, {
+  auth: {
+    username: apikey,
+    password: apisecret,
   }
-};
-
-https.get(options, (res) => {
-  let data = '';
-
-  res.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  res.on("end", () => {
-    console.log(data);
-  });
-
-  res.on("error", (error) => {
-    console.error(error);
-  });
-});
+}).then((response) => {
+  console.log(response.data)
+}).catch((error) => {
+  console.log(error)
+})
 ```
 
 ```python
 from requests import request
 
+apikey = "my_api_key"
+apisecret = "my_api_secret"
 url = "https://api.tidetech.org/v2/auth/"
 
-response = request("GET", url, auth=('my_api_key', 'my_api_secret'))
+response = request("GET", url, auth=(apikey, apisecret))
 
 print(response.json())
 ```
 
 ```csharp
-var apikey = "my_api_key";
-var apisecret = "my_api_secret";
+string apikey = "my_api_key";
+string apisecret = "my_api_secret";
+string url = "https://api.tidetech.org/v2/auth/";
 
-var client = new RestClient("https://api.tidetech.org/v2/auth/");
+var client = new RestClient(url);
 client.Authenticator = new HttpBasicAuthenticator(apikey, apisecret);
 client.Timeout = -1;
 
 var request = new RestRequest(Method.GET);
 
-IRestResponse response = client.Execute(request);
+var response = client.Execute(request);
 Console.WriteLine(response.Content);
 ```
 
@@ -93,11 +83,11 @@ import (
 const (
   apikey = "my_api_key"
   apisecret = "my_api_secret"
+  url = "https://api.tidetech.org/v2/auth/"
 )
 
 func main() {
 
-  url := "https://api.tidetech.org/v2/auth/"
   method := "GET"
 
   client := &http.Client {}
@@ -107,9 +97,9 @@ func main() {
     fmt.Println(err)
   }
   req.SetBasicAuth(apikey, apisecret)
-  res, err := client.Do(req)
+  res, _ := client.Do(req)
   defer res.Body.Close()
-  body, err := ioutil.ReadAll(res.Body)
+  body, _ := ioutil.ReadAll(res.Body)
 
   fmt.Println(string(body))
 }
@@ -149,41 +139,27 @@ print(response.json())
 ```
 
 ```javascript
-const https = require('https');
+const axios = require("axios")
 
-const options = {
-  'method': 'GET',
-  'hostname': 'https://api.tidetech.org',
-  'path': '/v2/auth/',
-  'headers': {
-  },
-  'maxRedirects': 20
-};
+const url = "https://api.tidetech.org/v2/auth/"
 
-const req = https.request(options, (res) => {
-  let data = '';
-
-  res.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  res.on("end", (chunk) => {
-    console.log(data);
-  });
-
-  res.on("error", (error) => {
-    console.error(error);
-  });
-});
+axios.get(url)
+  .then((response) => {
+    console.log(response.data)
+  }).catch((error) => {
+    console.log(error)
+  })
 ```
 
 ```csharp
-var client = new RestClient("https://api.tidetech.org/v2/auth/");
+string url = "https://api.tidetech.org/v2/auth/";
+
+var client = new RestClient(url);
 client.Timeout = -1;
 
 var request = new RestRequest(Method.GET);
 
-IRestResponse response = client.Execute(request);
+var response = client.Execute(request);
 Console.WriteLine(response.Content);
 ```
 
@@ -196,21 +172,21 @@ import (
   "io/ioutil"
 )
 
+const url = "https://api.tidetech.org/v2/auth/"
+
 func main() {
 
-  url := "https://api.tidetech.org/v2/auth/"
   method := "GET"
 
-  client := &http.Client {
-  }
+  client := &http.Client {}
   req, err := http.NewRequest(method, url, nil)
 
   if err != nil {
     fmt.Println(err)
   }
-  res, err := client.Do(req)
+  res, _ := client.Do(req)
   defer res.Body.Close()
-  body, err := ioutil.ReadAll(res.Body)
+  body, _ := ioutil.ReadAll(res.Body)
 
   fmt.Println(string(body))
 }

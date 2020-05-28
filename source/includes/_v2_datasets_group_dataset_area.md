@@ -14,8 +14,8 @@ with the appropriate Content-Type: application/json headers set.
 
 ``` shell
 curl --location --request POST https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/ \
---user 'my_api_key:my_api_secret' \
---header 'Content-Type: application/json' \
+--user "my_api_key:my_api_secret" \
+--header "Content-Type: application/json" \
 --data-raw '{
     "start_timestep": "2020-05-27T00:00:00Z",
     "end_timestep": "2020-05-27T12:00:00Z",
@@ -35,14 +35,34 @@ curl --location --request POST https://api.tidetech.org/v2/datasets/meteorology/
 ```
 
 ``` javascript
-const fs = require('fs')
-const axios = require('axios')
-const apikey = 'my_api_key'
-const apisecret = 'my_api_secret'
-const data = {"start_timestep":"2020-05-27T00:00:00Z","end_timestep":"2020-05-27T12:00:00Z","parameters":["UGRD","VGRD"],"polygon":{"type":"Polygon","coordinates":[[[-1.2732,50.8536],[-1.708,50.665],[-1.2732,50.502],[-0.8165,50.6691],[-1.2732,50.8536]]]}}
+const fs = require("fs")
+const axios = require("axios")
+const apikey = "my_api_key"
+const apisecret = "my_api_secret"
+const url = "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"
+const payload = {
+    "start_timestep": "2020-05-27T00:00:00Z",
+    "end_timestep": "2020-05-27T12:00:00Z",
+    "parameters": [
+        "UGRD",
+        "VGRD"
+    ],
+    "polygon": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [-1.2732, 50.8536],
+                [-1.708, 50.665],
+                [-1.2732, 50.502],
+                [-0.8165, 50.6691],
+                [-1.2732, 50.8536]
+            ]
+        ]
+    }
+}
 
-axios.post("https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/", data, {
-    responseType: 'stream',
+axios.post(url, payload, {
+    responseType: "stream",
     auth: {
         username: apikey,
         password: apisecret,
@@ -57,31 +77,69 @@ axios.post("https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/
 ``` python
 from requests import request
 
+apikey = "my_api_key"
+apisecret = "my_api_secret"
 url = "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"
+payload = {
+    "start_timestep": "2020-05-27T00:00:00Z",
+    "end_timestep": "2020-05-27T12:00:00Z",
+    "parameters": [
+        "UGRD",
+        "VGRD"
+    ],
+    "polygon": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [-1.2732,50.8536],
+                [-1.708,50.665],
+                [-1.2732,50.502],
+                [-0.8165,50.6691],
+                [-1.2732,50.8536]
+            ]
+        ]
+    }
+}
 
-payload = {"start_timestep":"2020-05-27T00:00:00Z","end_timestep":"2020-05-27T12:00:00Z","parameters":["UGRD","VGRD"],"polygon":{"type":"Polygon","coordinates":[[[-1.2732,50.8536],[-1.708,50.665],[-1.2732,50.502],[-0.8165,50.6691],[-1.2732,50.8536]]]}}
+response = request("POST", url, json=payload, auth=(apikey, apisecret), stream=True)
 
-r = request("POST", url, json=payload, auth=("my_api_key", "my_api_secret"), stream=True)
-
-with open('global_met.nc', 'wb') as f:
-    for chunk in r.iter_content(chunk_size=1024*1024):
+with open("global_met.nc", "wb") as f:
+    for chunk in response.iter_content(chunk_size=1024*1024):
         f.write(chunk)
 ```
 
 ``` csharp
-var apikey = "my_api_key";
-var apisecret = "my_api_secret";
+string apikey = "my_api_key";
+string apisecret = "my_api_secret";
+string url = "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/";
+string payload = "{" +
+    "\"start_timestep\": \"2020-05-27T00:00:00Z\"," +
+    "\"end_timestep\": \"2020-05-27T12:00:00Z\"," +
+    "\"parameters\": [" +
+        "\"UGRD\"," +
+        "\"VGRD\"" +
+    "]," +
+    "\"polygon\": {" +
+        "\"type\": \"Polygon\"," +
+        "\"coordinates\": [" +
+            "[" +
+                "[-1.2732, 50.8536]," +
+                "[-1.708, 50.665]," +
+                "[-1.2732, 50.502]," +
+                "[-0.8165, 50.6691]," +
+                "[-1.2732, 50.8536]" +
+            "]" +
+        "]" +
+    "}" +
+"}";
 
-var client = new RestClient("https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/");
+var client = new RestClient(url);
 client.Authenticator = new HttpBasicAuthenticator(apikey, apisecret);
 client.Timeout = -1;
 
 var request = new RestRequest(Method.POST);
 request.AddHeader("Content-Type", "application/json");
-request.AddParameter(
-    "application/json",
-    "{\"start_timestep\":\"2020-05-27T00:00:00Z\",\"end_timestep\":\"2020-05-27T12:00:00Z\",\"parameters\":[\"UGRD\",\"VGRD\"],\"polygon\":{\"type\":\"Polygon\",\"coordinates\":[[[-1.2732,50.8536],[-1.708,50.665],[-1.2732,50.502],[-0.8165,50.6691],[-1.2732,50.8536]]]}}",
-    ParameterType.RequestBody);
+request.AddJsonBody(payload);
 
 var response = client.DownloadData(request);
 File.WriteAllBytes("global_met.nc", response);
@@ -107,7 +165,23 @@ func main() {
     url := "https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/"
     method := "POST"
 
-    payload := strings.NewReader("{\"start_timestep\":\"2020-05-27T00:00:00Z\",\"end_timestep\":\"2020-05-27T12:00:00Z\",\"parameters\":[\"UGRD\",\"VGRD\"],\"polygon\":{\"type\":\"Polygon\",\"coordinates\":[[[-1.2732,50.8536],[-1.708,50.665],[-1.2732,50.502],[-0.8165,50.6691],[-1.2732,50.8536]]]}}")
+    payload := strings.NewReader(`
+    {
+        "start_timestep": "2020-05-27T00:00:00Z",
+        "end_timestep": "2020-05-27T12:00:00Z",
+        "parameters": ["UGRD", "VGRD"],
+        "polygon": {
+            "type": "Polygon",
+            "coordinates": [[
+                [-1.2732, 50.8536],
+                [-1.7080, 50.6650],
+                [-1.2732, 50.5020],
+                [-0.8165, 50.6691],
+                [-1.2732, 50.8536]
+            ]]
+        }
+    }
+    `)
 
     client := &http.Client {}
     req, err := http.NewRequest(method, url, payload)
