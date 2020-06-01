@@ -1,6 +1,6 @@
 --- 
 
-title: Metocean Data API 
+title: Tropical Rotating Storm API 
 
 language_tabs: 
     - shell 
@@ -15,17 +15,13 @@ toc_footers:
 includes:
     - introduction
     - access
-    - authentication
-    - v2
-    - v2_auth
-    - v2_datasets
-    - v2_datasets_group
-    - v2_datasets_group_dataset
-    - v2_datasets_group_dataset_points
-    - v2_datasets_group_dataset_area
-    - v2_datasets_group_dataset_forecast
+    - v1
+    - v1_active
+    - v1_storm_id
+    - v1_storm_id_features
     - metadata
-    - parameters
+    - basins
+    - categories
     - errors
 
 search: true

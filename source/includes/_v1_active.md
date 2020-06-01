@@ -1,7 +1,7 @@
-# /v2/
+# /v1/active
 
 ```shell
-curl --location --request GET https://api.tidetech.org/v2/auth/ \
+curl --location --request GET https://storm.tidetech.org/v1/active \
 --user "my_api_key:my_api_secret"
 ```
 
@@ -10,7 +10,7 @@ const axios = require("axios")
 
 const apikey = "my_api_key";
 const apisecret = "my_api_secret"
-const url = "https://api.tidetech.org/v2/auth/"
+const url = "https://storm.tidetech.org/v1/active"
 
 axios.get(url, {
   auth: {
@@ -29,7 +29,7 @@ from requests import request
 
 apikey = "my_api_key"
 apisecret = "my_api_secret"
-url = "https://api.tidetech.org/v2/auth/"
+url = "https://storm.tidetech.org/v1/active"
 
 response = request("GET", url, auth=(apikey, apisecret))
 
@@ -39,7 +39,7 @@ print(response.json())
 ```csharp
 string apikey = "my_api_key";
 string apisecret = "my_api_secret";
-string url = "https://api.tidetech.org/v2/auth/";
+string url = "https://storm.tidetech.org/v1/active";
 
 var client = new RestClient(url);
 client.Authenticator = new HttpBasicAuthenticator(apikey, apisecret);
@@ -63,7 +63,7 @@ import (
 const (
   apikey = "my_api_key"
   apisecret = "my_api_secret"
-  url = "https://api.tidetech.org/v2/auth/"
+  url = "https://storm.tidetech.org/v1/active"
 )
 
 func main() {
@@ -88,37 +88,32 @@ func main() {
 > Make sure to replace `my_api_key` and `my_api_secret` with your API Key and Secret.
 
 
-**Summary:** API index
+**Summary:** Active storms index
 
-**Description:** The index endpoint lists the available API endpoints.
+**Description:** The active storms endpoint lists all currently active storms in all basins.
 
-**Endpoint** `/v2/`
+**Endpoint** `/v1/active`
 
 **Method** `GET`
 
-
-**Parameters**
-
-| Name | Located in | Description | Required | Type |
-| ---- | ---------- | ----------- | -------- | ---- |
-| login | query | add `?login=true` to login to the API using an html form | No | boolean |
 
 **Responses**
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | JSON object containing API index |
+| 200 | JSON object containing active storms array |
 
 
 > The above command returns json structured like this:
 
 ```json
 {
-  "links": {
-    "index": "https://api.tidetech.org/v2/",
-    "auth": "https://api.tidetech.org/v2/auth/",
-    "login": "https://api.tidetech.org/v2/?login=true",
-    "datasets": "https://api.tidetech.org/v2/datasets/"
-  }
+  "data": [
+    {
+      "id": "202002E",
+      "name": "AMANDA",
+      "details": "https://storm.tidetech.org/v1/storm/202002E"
+    }
+  ]
 }
 ```

@@ -1,17 +1,7 @@
-# /v2/datasets/
-
-**Summary:** List available dataset groups
-
-**Description:** The /v2/datasets/ endpoint lists all the dataset groups available
-to you and their URLS.
-
-**Endpoint** `/v2/datasets/`
-
-**Method** `GET`
-
+# /v1/storm/{id}
 
 ```shell
-curl --location --request GET https://api.tidetech.org/v2/datasets/ \
+curl --location --request GET https://storm.tidetech.org/v1/storm/202002E \
 --user "my_api_key:my_api_secret"
 ```
 
@@ -20,7 +10,7 @@ const axios = require("axios")
 
 const apikey = "my_api_key";
 const apisecret = "my_api_secret"
-const url = "https://api.tidetech.org/v2/datasets/"
+const url = "https://storm.tidetech.org/v1/storm/202002E"
 
 axios.get(url, {
   auth: {
@@ -39,7 +29,7 @@ from requests import request
 
 apikey = "my_api_key"
 apisecret = "my_api_secret"
-url = "https://api.tidetech.org/v2/datasets/"
+url = "https://storm.tidetech.org/v1/storm/202002E"
 
 response = request("GET", url, auth=(apikey, apisecret))
 
@@ -49,7 +39,7 @@ print(response.json())
 ```csharp
 string apikey = "my_api_key";
 string apisecret = "my_api_secret";
-string url = "https://api.tidetech.org/v2/datasets/";
+string url = "https://storm.tidetech.org/v1/storm/202002E";
 
 var client = new RestClient(url);
 client.Authenticator = new HttpBasicAuthenticator(apikey, apisecret);
@@ -73,7 +63,7 @@ import (
 const (
   apikey = "my_api_key"
   apisecret = "my_api_secret"
-  url = "https://api.tidetech.org/v2/datasets/"
+  url = "https://storm.tidetech.org/v1/storm/202002E"
 )
 
 func main() {
@@ -97,39 +87,64 @@ func main() {
 
 > Make sure to replace `my_api_key` and `my_api_secret` with your API Key and Secret.
 
+
+**Summary:** Storm metadata
+
+**Description:** The /v2/storm/{id} endpoint returns the most recent metadata for that storm.
+
+**Endpoint** `/v1/storm/{id}`
+
+**Method** `GET`
+
+
 **Responses**
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | JSON object containing list of group objects |
+| 200 | JSON object containing storm metadata |
 
 
-> The above command returns json structured like this (shortened for brevity):
+> The above command returns json structured like this:
 
 ```json
 {
-    "data": [
-        {
-            "type": "group",
-            "id": "currents",
-            "name": "Currents",
-            "description": "Currents",
-            "datasets": 10,
-            "links": {
-                "datasets": "https://api.tidetech.org/v2/datasets/currents/"
-            }
-        },
-        {
-            "type": "group",
-            "id": "meteorology",
-            "name": "Meteorology",
-            "description": "Meteorology",
-            "datasets": 2,
-            "links": {
-                "datasets": "https://api.tidetech.org/v2/datasets/meteorology/"
-            }
-        },
-        ...other dataset groups
+  "data": {
+    "id": "202002E",
+    "advisory": "2020-05-31T15:00:00Z",
+    "is_active": true,
+    "name": "AMANDA",
+    "basin": "NEP",
+    "category": "ts",
+    "forecast_hours": 72,
+    "geojson": "https://storm.tidetech.org/v1/storm/202002E/features",
+    "event_number": 2,
+    "position": [
+      -90.3,
+      14.7
+    ],
+    "movement": {
+      "KPH": 17,
+      "MPH": 10,
+      "KTS": 9,
+      "bearing": 6
+    },
+    "max_observed_category": "ts",
+    "max_forecast_category": "ts",
+    "name_list": [
+      "02E",
+      "AMANDA"
+    ],
+    "advisory_list": [
+      "2020-05-31T03:00:00Z",
+      "2020-05-31T09:00:00Z",
+      "2020-05-31T15:00:00Z"
     ]
+  }
 }
 ```
+
+**Parameters**
+
+| Name | Located in | Description | Required | Type |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path | storm id | Yes | string |
