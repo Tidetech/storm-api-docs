@@ -348,7 +348,7 @@ You must authenticate in order to access non-public metadata, datasets and forec
 <p><code>curl</code> is a popular lightweight command line tool used to transfer data to or from servers. It is available for all major operating systems and can be used to test the <code>shell</code> API request examples.</p>
 
 <aside class="notice">
-As the files served from our `forecast` endpoint are stored on Amazon S3, it is necessary to pass the `--location` option to curl commands in order to allow curl to follow the redirect and retrieve the file. See the <a href='#v2-datasets-group-dataset-forecast'>/v2/datasets/{group}/{dataset}/forecast/</a> section for more details.
+As the files served from our `forecast` endpoint are stored on Amazon S3, it is necessary to pass the `--location` option to curl commands in order to allow curl to follow the redirect and retrieve the file. See the <a href='?shell#v2-datasets-group-dataset-forecast'>/v2/datasets/{group}/{dataset}/forecast/</a> section for more details.
 </aside>
 <h1 id='authentication'>Authentication</h1>
 <p>There are only limited sample datasets available without authentication. To access all datasets enabled in your subscription, you must supply valid authentication details with your request.</p>
@@ -1464,6 +1464,34 @@ Content-Type: application/json headers set.</p>
 <td>Yes</td>
 <td>string</td>
 </tr>
+<tr>
+<td>point</td>
+<td>body</td>
+<td>coordinates to extract</td>
+<td>Yes</td>
+<td>Point or MultiPoint</td>
+</tr>
+<tr>
+<td>timestep</td>
+<td>body</td>
+<td>timestep to extract data for</td>
+<td>Yes</td>
+<td>string</td>
+</tr>
+<tr>
+<td>id</td>
+<td>body</td>
+<td>user assigned identifier</td>
+<td>No</td>
+<td>string</td>
+</tr>
+<tr>
+<td>parameters</td>
+<td>body</td>
+<td>dataset parameters</td>
+<td>No</td>
+<td>array of strings</td>
+</tr>
 </tbody></table>
 
 <p><strong>Responses</strong></p>
@@ -1476,9 +1504,19 @@ Content-Type: application/json headers set.</p>
 </thead><tbody>
 <tr>
 <td>200</td>
-<td>JSON object containing GeoJSON point data</td>
+<td>JSON object containing a GeoJSON FeatureCollection</td>
 </tr>
 </tbody></table>
+
+<p>The returned data is a GeoJSON FeatureCollection, with one Feature per Point or MultiPoint sent in. The data for each point will be returned in the <code>properties</code> field of the Feature.</p>
+
+<aside class="notice">
+If multiple points from a single timestep are required, a request with a single MultiPoint is more efficient than a single request with many Points.
+</aside>
+
+<aside class="warning">
+Each request sent is only allowed to contain up to a maximum of 500 points. If you need more than this number of points, split the points over multiple requests.
+</aside>
 
 <blockquote>
 <p>The above command returns json containing GeoJSON point data:</p>
@@ -1551,14 +1589,19 @@ Content-Type: application/json headers set.</p>
 </span></code></pre></div><h1 id='v2-datasets-group-dataset-area'>/v2/datasets/{group}/{dataset}/area/</h1>
 <p><strong>Summary:</strong> Raster data from a dataset</p>
 
-<p><strong>Description:</strong> The /v2/datasets/{group}/{dataset}/area/ endpoint extracts
-data from a dataset over an entire area. The endpoint only
-accepts POST requests. POST requests must be in JSON format, 
-with the appropriate Content-Type: application/json headers set.</p>
+<p><strong>Description:</strong> The /v2/datasets/{group}/{dataset}/area/ endpoint extracts data from a dataset over an entire area. The endpoint only accepts POST requests. POST requests must be in JSON format, with the appropriate Content-Type: application/json headers set.</p>
 
 <p><strong>Endpoint</strong> <code>/v2/datasets/{group}/{dataset}/area/</code></p>
 
 <p><strong>Method</strong> <code>POST</code></p>
+
+<aside class="notice">
+The <a href="#v2-datasets-group-dataset-forecast">/v2/datasets/{group}/{dataset}/forecast/</a> endpoint is more efficient for downloading the most recent forecast for a dataset.
+</aside>
+
+<aside class="warning">
+The <b><em>global_ocean_surface_temperature</em></b> dataset grid size is too large for GRIBv1 format, and is currently only available to download as a NetCDF file.
+</aside>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> POST https://api.tidetech.org/v2/datasets/meteorology/global_meteorology/area/ <span class="se">\</span>
 <span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
@@ -1762,6 +1805,62 @@ with the appropriate Content-Type: application/json headers set.</p>
 <td>Yes</td>
 <td>string</td>
 </tr>
+<tr>
+<td>polygon</td>
+<td>body</td>
+<td>area to be extracted</td>
+<td>No</td>
+<td>Polygon or MultiPolygon</td>
+</tr>
+<tr>
+<td>start_timestep</td>
+<td>body</td>
+<td>start timestep</td>
+<td>Yes</td>
+<td>string ISO8601</td>
+</tr>
+<tr>
+<td>end_timestep</td>
+<td>body</td>
+<td>end timestep</td>
+<td>Yes</td>
+<td>string ISO8601</td>
+</tr>
+<tr>
+<td>parameters</td>
+<td>body</td>
+<td>dataset parameters</td>
+<td>No</td>
+<td>array of strings</td>
+</tr>
+<tr>
+<td>lon_resolution</td>
+<td>body</td>
+<td>resampled longitudinal resolution</td>
+<td>No</td>
+<td>float</td>
+</tr>
+<tr>
+<td>lat_resolution</td>
+<td>body</td>
+<td>resampled latitudinal resolution</td>
+<td>No</td>
+<td>float</td>
+</tr>
+<tr>
+<td>compress</td>
+<td>body</td>
+<td>&quot;gz&quot; or &quot;bz2&quot; compression</td>
+<td>No</td>
+<td>string</td>
+</tr>
+<tr>
+<td>format</td>
+<td>body</td>
+<td>&quot;nc&quot; or &quot;grb&quot; file format</td>
+<td>No</td>
+<td>string</td>
+</tr>
 </tbody></table>
 
 <p><strong>Responses</strong></p>
@@ -1784,11 +1883,21 @@ with the appropriate Content-Type: application/json headers set.</p>
 <h1 id='v2-datasets-group-dataset-forecast'>/v2/datasets/{group}/{dataset}/forecast/</h1>
 <p><strong>Summary:</strong> download a dataset&#39;s most recent forecast</p>
 
-<p><strong>Description:</strong> The /v2/datasets/{group}/{dataset}/area/ endpoint will download the most recent forecast as a NetCDF or GRIB dataset.</p>
+<p><strong>Description:</strong> The /v2/datasets/{group}/{dataset}/forecast/ endpoint will download the most recent forecast as a NetCDF or (if available) GRIB dataset.</p>
+
+<p>The dataset contains all the parameters listed in <code>/v2/datasets/{group}/{dataset}/</code>, and all timesteps between forecast_timestep and end_timestep.</p>
+
+<p>The API will return a 302 Redirect response to an Amazon S3 URL. This URL will only remain valid for a short period of time. You should make a new request to this endpoint, and get a new one-time S3 download URL, every time you need to download the forecast.</p>
 
 <p><strong>Endpoint</strong> <code>/v2/datasets/{group}/{dataset}/forecast/</code></p>
 
+<p>This endpoint does not allow you to select a spatial or temporal subset of the forecast, select a subset of the dataset bands, or resample the dataset resolution.</p>
+
 <p><strong>Method</strong> <code>GET</code></p>
+
+<aside class="warning">
+The <b><em>global_ocean_surface_temperature</em></b> dataset grid size is too large for GRIBv1 format, and is currently only available to download as a NetCDF file.
+</aside>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://api.tidetech.org/v2/datasets/currents/solent_currents/forecast/ <span class="se">\</span>
 <span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span> <span class="se">\</span>
 <span class="nt">--output</span> solent_forecast.nc
@@ -1904,6 +2013,14 @@ with the appropriate Content-Type: application/json headers set.</p>
 <td>string</td>
 </tr>
 </tbody></table>
+
+<aside class="notice">
+The <em><b>/v2/datasets/{group}/{dataset}/forecast/</b></em> endpoint only supports the following combinations of <em><b>format</b></em> and <em><b>compress</b></em>:
+<ul>
+    <li><em><b>nc</b></em> with no compression,
+    <li><em><b>grb</b></em> with no compression, or
+    <li><em><b>grb</b></em> with <em><b>bz2</b></em> compression.
+</aside>
 
 <p><strong>Responses</strong></p>
 
