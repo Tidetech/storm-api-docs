@@ -2,11 +2,21 @@
 
 **Summary:** download a dataset's most recent forecast
 
-**Description:** The /v2/datasets/{group}/{dataset}/area/ endpoint will download the most recent forecast as a NetCDF or GRIB dataset.
+**Description:** The /v2/datasets/{group}/{dataset}/forecast/ endpoint will download the most recent forecast as a NetCDF or (if available) GRIB dataset.
+
+The dataset contains all the parameters listed in `/v2/datasets/{group}/{dataset}/`, and all timesteps between forecast_timestep and end_timestep.
+
+The API will return a 302 Redirect response to an Amazon S3 URL. This URL will only remain valid for a short period of time. You should make a new request to this endpoint, and get a new one-time S3 download URL, every time you need to download the forecast.
 
 **Endpoint** `/v2/datasets/{group}/{dataset}/forecast/`
 
+This endpoint does not allow you to select a spatial or temporal subset of the forecast, select a subset of the dataset bands, or resample the dataset resolution.
+
 **Method** `GET`
+
+<aside class="warning">
+The <b><em>global_ocean_surface_temperature</em></b> dataset grid size is too large for GRIBv1 format, and is currently only available to download as a NetCDF file.
+</aside>
 
 
 ``` shell
@@ -105,6 +115,14 @@ func main() {
 | dataset | path | dataset id | Yes | string |
 | compress | query | file compression type | No | string |
 | format | query | file format | No | string |
+
+<aside class="notice">
+The <em><b>/v2/datasets/{group}/{dataset}/forecast/</b></em> endpoint only supports the following combinations of <em><b>format</b></em> and <em><b>compress</b></em>:
+<ul>
+    <li><em><b>nc</b></em> with no compression,
+    <li><em><b>grb</b></em> with no compression, or
+    <li><em><b>grb</b></em> with <em><b>bz2</b></em> compression.
+</aside>
 
 **Responses**
 

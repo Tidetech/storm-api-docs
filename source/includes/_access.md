@@ -19,6 +19,6 @@ You must authenticate in order to access non-public metadata, datasets and forec
 `curl` is a popular lightweight command line tool used to transfer data to or from servers. It is available for all major operating systems and can be used to test the `shell` API request examples.
 
 <aside class="notice">
-As the files served from our `forecast` endpoint are stored on Amazon S3, it is necessary to pass the `--location` option to curl commands in order to allow curl to follow the redirect and retrieve the file. See the <a href='#v2-datasets-group-dataset-forecast'>/v2/datasets/{group}/{dataset}/forecast/</a> section for more details.
+As the files served from our `forecast` endpoint are stored on Amazon S3, it is necessary to pass the `--location` option to curl commands in order to allow curl to follow the redirect and retrieve the file. See the <a href='?shell#v2-datasets-group-dataset-forecast'>/v2/datasets/{group}/{dataset}/forecast/</a> section for more details.
 </aside>
 

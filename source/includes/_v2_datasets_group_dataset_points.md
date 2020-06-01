@@ -263,12 +263,26 @@ func main() {
 | ---- | ---------- | ----------- | -------- | ---- |
 | group | path | dataset group id | Yes | string |
 | dataset | path | dataset id | Yes | string |
+| point | body | coordinates to extract | Yes | Point or MultiPoint |
+| timestep | body | timestep to extract data for | Yes | string |
+| id | body | user assigned identifier | No | string |
+| parameters | body | dataset parameters | No | array of strings |
 
 **Responses**
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | JSON object containing GeoJSON point data |
+| 200 | JSON object containing a GeoJSON FeatureCollection |
+
+The returned data is a GeoJSON FeatureCollection, with one Feature per Point or MultiPoint sent in. The data for each point will be returned in the `properties` field of the Feature.
+
+<aside class="notice">
+If multiple points from a single timestep are required, a request with a single MultiPoint is more efficient than a single request with many Points.
+</aside>
+
+<aside class="warning">
+Each request sent is only allowed to contain up to a maximum of 500 points. If you need more than this number of points, split the points over multiple requests.
+</aside>
 
 > The above command returns json containing GeoJSON point data:
 

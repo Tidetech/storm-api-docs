@@ -2,14 +2,19 @@
 
 **Summary:** Raster data from a dataset
 
-**Description:** The /v2/datasets/{group}/{dataset}/area/ endpoint extracts
-data from a dataset over an entire area. The endpoint only
-accepts POST requests. POST requests must be in JSON format, 
-with the appropriate Content-Type: application/json headers set.
+**Description:** The /v2/datasets/{group}/{dataset}/area/ endpoint extracts data from a dataset over an entire area. The endpoint only accepts POST requests. POST requests must be in JSON format, with the appropriate Content-Type: application/json headers set.
 
 **Endpoint** `/v2/datasets/{group}/{dataset}/area/`
 
 **Method** `POST`
+
+<aside class="notice">
+The <a href="#v2-datasets-group-dataset-forecast">/v2/datasets/{group}/{dataset}/forecast/</a> endpoint is more efficient for downloading the most recent forecast for a dataset.
+</aside>
+
+<aside class="warning">
+The <b><em>global_ocean_surface_temperature</em></b> dataset grid size is too large for GRIBv1 format, and is currently only available to download as a NetCDF file.
+</aside>
 
 
 ``` shell
@@ -209,6 +214,14 @@ func main() {
 | ---- | ---------- | ----------- | -------- | ---- |
 | group | path | dataset group id | Yes | string |
 | dataset | path | dataset id | Yes | string |
+| polygon | body | area to be extracted | No | Polygon or MultiPolygon |
+| start_timestep | body | start timestep | Yes | string ISO8601 |
+| end_timestep | body | end timestep | Yes | string ISO8601 |
+| parameters | body | dataset parameters | No | array of strings |
+| lon_resolution | body | resampled longitudinal resolution | No | float |
+| lat_resolution | body | resampled latitudinal resolution | No | float |
+| compress | body | "gz" or "bz2" compression | No | string |
+| format | body | "nc" or "grb" file format | No | string |
 
 **Responses**
 
