@@ -9,10 +9,6 @@ Explore the API by accessing the URLs provided in the response data. This is use
 
 You can view active storms, metadata and GeoJSON in your browser by navigating to the index at https://storm.tidetech.org/v1/ and following the links provided.
 
-<aside class="notice">
-You must authenticate in order to access non-public metadata, datasets and forecasts. See the <a href='#browser-authentication'>Browser authentication</a> section for more details.
-</aside>
-
 
 ## Accessing via curl
 
