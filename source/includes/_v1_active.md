@@ -105,9 +105,9 @@ func main() {
 
 
 > The above command returns json structured like this:
+> With active storms:
 
 ```json
-## With active storms:
 {
   "data": [
     {
@@ -118,8 +118,10 @@ func main() {
     ...other active storms
   ]
 }
+```
 
-## Without active storms:
+> Without active storms:
+```json
 {
   "data": []
 }
