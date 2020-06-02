@@ -1,4 +1,4 @@
-# Categories
+# Storm Categories
 
 | strength | category | color | speed kts | speed mph | speed kph |
 |----------|----------|-------|-----------|-----------|-----------|

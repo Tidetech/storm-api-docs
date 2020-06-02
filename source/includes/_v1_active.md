@@ -107,13 +107,20 @@ func main() {
 > The above command returns json structured like this:
 
 ```json
+## With active storms:
 {
   "data": [
     {
       "id": "202002E",
       "name": "AMANDA",
       "details": "https://storm.tidetech.org/v1/storm/202002E"
-    }
+    },
+    ...other active storms
   ]
+}
+
+## Without active storms:
+{
+  "data": []
 }
 ```
