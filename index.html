@@ -274,7 +274,7 @@
               </ul>
           </li>
           <li>
-            <a href="#categories" class="toc-h1 toc-link" data-title="Categories">Categories</a>
+            <a href="#storm-categories" class="toc-h1 toc-link" data-title="Storm Categories">Storm Categories</a>
           </li>
           <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
@@ -290,7 +290,21 @@
         <h1 id='introduction'>Introduction</h1>
 <p><strong>Version:</strong> v1</p>
 
-<p>The Tidetech TRS V1 API is a <a href='https://en.wikipedia.org/wiki/Representational_state_transfer'>RESTful web service</a> providing forecasts, point data (<a href='https://www.json.org'>JSON</a> containing <a href='https://tools.ietf.org/html/rfc7946'>GeoJSON</a> features) and metadata for tropical storm activity in all ocean basins worldwide.</p>
+<p>The Tidetech Storm V1 API is a <a href='https://en.wikipedia.org/wiki/Representational_state_transfer'>RESTful web service</a> providing access to the latest data on tropical rotating storm activity for all ocean basins worldwide.</p>
+
+<p>Forecasts are available out to 5 days/120 hours, or until the storm is expected to dissipate if less than 120 hours.</p>
+
+<p>A list of currently active storms is provided via the <a href="#v1_active"><code>/v1/active</code></a> endpoint.</p>
+
+<p>Metadata for each active storm can be accessed from <a href="#v1_storm_id"><code>/v1/storm/{id}</code></a> and is updated 4 times/day for the Northern hemisphere, and 2 times/day for the Southern hemisphere. See the <a href="#metadata">Metadata</a> section for more details.</p>
+
+<p>The <a href="https://tools.ietf.org/html/rfc7946">GeoJSON</a> representation of each storm contains:
+* Past storm tracks (lines)
+* Forecast storm tracks (lines)
+* Past storm positions and categories (points)
+* Forecast storm positions including <a href="#categories">storm categories</a>, movement speed and direction at each forecast interval (0, 12, 24, 36, 48, 72, 96, 120 hours)
+* Forecast Error Boundaries for each forecast interval (lines)
+* Forecast Peak Gust Fields for the entire forecast (polygons)</p>
 <h1 id='accessing-the-api'>Accessing the API</h1>
 <p>The API can be accessed at <a href='https://storm.tidetech.org/v1/'>https://storm.tidetech.org/v1/</a></p>
 <h2 id='accessing-via-browser'>Accessing via browser</h2>
@@ -504,14 +518,21 @@
 <blockquote>
 <p>The above command returns json structured like this:</p>
 </blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="err">##</span><span class="w"> </span><span class="err">With</span><span class="w"> </span><span class="err">active</span><span class="w"> </span><span class="err">storms:</span><span class="w">
+</span><span class="p">{</span><span class="w">
   </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
       </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"202002E"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AMANDA"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"details"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://storm.tidetech.org/v1/storm/202002E"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="err">...other</span><span class="w"> </span><span class="err">active</span><span class="w"> </span><span class="err">storms</span><span class="w">
   </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="err">##</span><span class="w"> </span><span class="err">Without</span><span class="w"> </span><span class="err">active</span><span class="w"> </span><span class="err">storms:</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div><h1 id='v1-storm-id'>/v1/storm/{id}</h1><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET https://storm.tidetech.org/v1/storm/202002E <span class="se">\</span>
 <span class="nt">--user</span> <span class="s2">"my_api_key:my_api_secret"</span>
@@ -983,7 +1004,7 @@
 <td>South Indian</td>
 </tr>
 </tbody></table>
-<h1 id='categories'>Categories</h1>
+<h1 id='storm-categories'>Storm Categories</h1>
 <table><thead>
 <tr>
 <th>strength</th>
